@@ -5,7 +5,6 @@ import SignupPage from "./Pages/SignupPage";
 import Home from "./Pages/Home";
 import NotesPage from "./Pages/NotePage";
 import TaskPage from "./Pages/TaskPage";
-import ProfilePage from "./Pages/ProfilePage";
 import {UserContextProvider} from "./context/UserContext"
 import Navbar from "./Components/Navbar";
 function App() {
@@ -21,7 +20,6 @@ function App() {
           <Route path="/home" element={<Home/>} ></Route>
           <Route path="/notes" element={<NotesPage/>}></Route>
           <Route path="/tasks" element={<TaskPage/>}></Route>
-          <Route path="/profile" element={<ProfilePage/>}></Route>
         </Routes>
       </UserContextProvider>
     </div>

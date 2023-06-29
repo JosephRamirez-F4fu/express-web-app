@@ -76,16 +76,16 @@ export const UserContextProvider = ({ children }) => {
   ]);
   const [tasks, setTasks] = useState([
     {
-      id: "asd112zx",
-      name: "asdasd",
+      id: 1,
+      name: "asdasd asd",
       isDone: false,
-      subtasks: [{ name: "asdasd", isDone: true }],
+      subtasks: [{ name: "asdaaaasd", isDone: true }],
     },
     {
-      id: "asd112zx",
-      name: "asdasd",
+      id: 2,
+      name: "asdasd asdasd",
       isDone: false,
-      subtasks: [{ name: "asdasd", isDone: true }],
+      subtasks: [{ name: "asdasaaaad", isDone: true }],
     },
   ]);
   const [isLogin, setisLogin] = useState(true);
@@ -249,6 +249,7 @@ export const UserContextProvider = ({ children }) => {
         notes,
         tasks,
         isLogin,
+        setTasks,setNotes,
         createUserConsumer,
         loginUserConsumer,
         delUserIdConsumer,

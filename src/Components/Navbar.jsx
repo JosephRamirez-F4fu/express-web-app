@@ -29,9 +29,6 @@ export default function Navbar() {
         </div>
       ) : (
         <div>
-          <Link className="px-4 hover:underline decoration-solid" to="/profile">
-            Profile
-          </Link>
           <Link className="px-4 hover:underline decoration-solid" to="/" onClick={logout}>
             Logout
           </Link>

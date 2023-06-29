@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmpassword, setConfirmPassword] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastame] = useState('');
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -85,11 +88,12 @@ const LoginPage = () => {
         >
           Registrarse
         </button>
-        <button
+        <Link
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 my-4 rounded"
+          to="/login"
         >
          ¿Ya tienes un cuenta ? Ingresa aquí!  
-        </button>
+        </Link>
       </form>
     </div>
     </div>

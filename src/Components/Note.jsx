@@ -2,15 +2,12 @@ import { useEffect, useState } from "react";
 
 export function Note({ note }) {
   const [isDeleted, setIsDeleted] = useState(false);
-
-    
-
   const handleDelete = () => {
     setIsDeleted(true);
   };
   useEffect(() => {}, [isDeleted]);
   return (
-    <div className={`w-40 bg-lime-400 p-4  ${isDeleted ? " duration-200 transform scale-0 " : ""}`} >
+    <div className={`w-40 bg-purple-300 p-4  rounded-md ${isDeleted ? " duration-200 transform scale-0 " : ""}`} >
       <div className={`text-right `}>
         {""}
         <label

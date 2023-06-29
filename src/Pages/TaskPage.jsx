@@ -1,24 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { UseUser } from "../context/UserContext";
 
 export default function TaskPage() {
   const [isNewTask, setIsNewTask] = useState(true);
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "mi tarea",
-      isDone: false,
-      subtasks: [{ title: "subtarea 1", isDone: false }],
-    },
-  ]);
-
-  // nueva subtarea
+  const {tasks, setTasks} = UseUser();
+  console.log(tasks)
+  // Nueva subtarea
   const [subtask, setSubTask] = useState({
-    title: "nueva subtarea",
+    name: "nueva subtarea",
     isDone: false,
   });
-  // mi tarea nueva
+
+  // Mi tarea nueva
   const [task, setTask] = useState({
-    title: "nueva tarea",
+    name: "nueva tarea",
     isDone: false,
     subtasks: [],
   });
@@ -31,18 +26,20 @@ export default function TaskPage() {
   };
 
   const handleTaskTitle = (e) => {
-    setTask({ ...task, title: e.target.value });
+    setTask({ ...task, name: e.target.value });
   };
 
   const blurTaskTitle = (e) => {
     if (e.target.value === "") {
       e.target.value = "nueva tarea";
-      setTask({ ...task, title: "nueva tarea" });
+      setTask({ ...task, name: "nueva tarea" });
     }
   };
 
   const focusTaskTitle = (e) => {
-    if (e.target.value === "nueva tarea") e.target.value = "";
+    if (e.target.value === "nueva tarea") {
+      e.target.value = "";
+    }
   };
 
   const handleIsDone = (e) => {
@@ -51,77 +48,89 @@ export default function TaskPage() {
 
   // NUEVA SUBTAREA
   const handleNewSubTaskTitle = (e) => {
-    setSubTask({ ...subtask, title: e.target.value });
+    setSubTask({ ...subtask, name: e.target.value });
   };
 
   const blurNewSubTaskTaskTitle = (e) => {
     if (e.target.value === "") {
       e.target.value = "nueva subtarea";
-      setSubTask({ ...subtask, title: "nueva subtarea" });
+      setSubTask({ ...subtask, name: "nueva subtarea" });
     }
     if (e.target.value !== "" && e.target.value !== "nueva subtarea") {
       setTask({ ...task, subtasks: [...task.subtasks, subtask] });
       setSubTask({
-        title: "nueva subtarea",
+        name: "nueva subtarea",
         isDone: false,
       });
     }
   };
 
   const focusNewSubTaskTaskTitle = (e) => {
-    if (e.target.value === "nueva subtarea") e.target.value = "";
+    if (e.target.value === "nueva subtarea") {
+      e.target.value = "";
+    }
   };
 
-  const handleNewSubTaskIsDone = (e) => {
-    setSubTask({ ...subtask, isDone: e.target.checked });
+  const updateSubTaskTitle = (index, value) => {
+    const updatedSubTasks = [...task.subtasks];
+    updatedSubTasks[index] = { ...updatedSubTasks[index], name: value };
+    setTask({ ...task, subtasks: updatedSubTasks });
   };
 
-  const UpdateSubTaskTitle = (index, value) => {
-    const updateSubTasks = [...task.subtasks];
-    updateSubTasks[index] = { ...updateSubTasks[index], title: value };
-    setTask({ ...task, subtasks: updateSubTasks });
+  const updateSubTaskIsDone = (index, value) => {
+    const updatedSubTasks = [...task.subtasks];
+    updatedSubTasks[index] = { ...updatedSubTasks[index], isDone: value };
+    setTask({ ...task, subtasks: updatedSubTasks });
   };
 
-  const UpdateSubTaskIsDone = (index, value) => {
-    const updateSubTasks = [...task.subtasks];
-    updateSubTasks[index] = {
-      ...updateSubTasks[index],
-      isDone: value,
-    };
-    setTask({ ...task, subtasks: updateSubTasks });
+  const handleDeleteTask = () => {
+    if (isNewTask) return;
+    const updatedTasks = tasks.filter((t) => t.id !== task.id);
+    setTasks(updatedTasks);
+    setIsNewTask(true);
+    setTask({
+      name: "nueva tarea",
+      isDone: false,
+      subtasks: [],
+    });
+  };
+
+  const handleDeleteSubTask = (index) => {
+    const updatedSubTasks = [...task.subtasks];
+    updatedSubTasks.splice(index, 1);
+    setTask({ ...task, subtasks: updatedSubTasks });
   };
 
   const handleSaveTask = () => {
     if (isNewTask) {
-      // Agregar una nueva tarea
-      const newTask = { ...task, id: tasks.length + 1 };
+      // Agregar nueva tarea
+      const newTask = {
+        id: tasks.length + 1,
+        name: task.name,
+        isDone: task.isDone,
+        subtasks: task.subtasks,
+      };
       setTasks([...tasks, newTask]);
-      setTask({
-        title: "nueva tarea",
-        isDone: false,
-        subtasks: [],
-      })
+      setIsNewTask(false);
     } else {
-      // Editar una tarea existente
-      const updatedTasks = [...tasks];
-      const taskIndex = updatedTasks.findIndex((t) => t.id === task.id);
-      if (taskIndex !== -1) {
-        updatedTasks[taskIndex] = task;
-        setTasks(updatedTasks);
+      // Editar tarea existente
+      const index = tasks.findIndex((t) => t.id === task.id);
+      if (index !== -1) {
+        updateTask(index, task);
       }
     }
   };
 
   return (
-    <div className="grid  justify-center ">
-      <main className="w-[80rem] min-h-[88vh] grid grid-cols-5 grid-rows-2 gap-3 p-4 ">
-        <div className="col-span-1 row-span-2 bg-yellow-500 rounded-xl p-4 ">
+    <div className="grid  justify-center">
+      <main className="w-[80rem] min-h-[88vh] grid grid-cols-5 grid-rows-2 gap-3 p-4">
+        <div className="col-span-1 row-span-2 bg-yellow-500 rounded-xl p-4">
           <div
             className="bg-yellow-300 px-3 rounded-md cursor-pointer hover:bg-yellow-200 mb-2"
             onClick={() => {
               setIsNewTask(true);
               setTask({
-                title: "nueva tarea",
+                name: "nueva tarea",
                 isDone: false,
                 subtasks: [],
               });
@@ -130,21 +139,19 @@ export default function TaskPage() {
             nueva tarea
           </div>
           <ul>
-            {tasks.map((item) => {
-              return (
-                <li key={item.id}>
-                  <div
-                    className="bg-yellow-400 px-3 rounded-md cursor-pointer hover:bg-yellow-200 mb-2"
-                    onClick={() => {
-                      setTask(item);
-                      setIsNewTask(false);
-                    }}
-                  >
-                    {item.title}
-                  </div>
-                </li>
-              );
-            })}
+            {tasks.map((item) => (
+              <li key={item.id}>
+                <div
+                  className="bg-yellow-400 px-3 rounded-md cursor-pointer hover:bg-yellow-200 mb-2"
+                  onClick={() => {
+                    setTask(item);
+                    setIsNewTask(false);
+                  }}
+                >
+                  {item.name}
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="col-span-4 row-span-2 bg-green-400  rounded-xl p-4">
@@ -160,60 +167,88 @@ export default function TaskPage() {
               <input
                 className="bg-green-200 border-none outline-none  h-10 w-3/6 rounded-md px-4 my-2"
                 type="text"
-                value={task.title}
+                value={task.name}
                 onBlur={blurTaskTitle}
                 onChange={handleTaskTitle}
                 onFocus={focusTaskTitle}
               ></input>
+              {!isNewTask && (
+                <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4"
+                  onClick={handleDeleteTask}
+                >
+                  Eliminar Tarea
+                </button>
+              )}
             </div>
           </div>
           <ul>
-            {task.subtasks.map((subtask, index) => {
-              return (
-                <li key={index}>
-                  <input
-                    onChange={(e) =>
-                      UpdateSubTaskIsDone(index, e.target.checked)
-                    }
-                    type="checkbox"
-                    checked={subtask.isDone}
-                    className="appearance-none h-6 w-6 mx-2 rounded-full cursor-pointer  border-2 border-white hover:border-none
-        hover:bg-white hover:ring-2 hover:ring-white hover:ring-opacity-50
-          transition-transform duration-100 checked:bg-blue-600  checked:ring-2 checked:ring-black checked:ring-opacity-100 checked:text-white checked:border-none"
-                  ></input>
-                  <input
-                    className=" bg-green-700 border-none outline-none  h-10 w-3/6 rounded-md px-4  my-2"
-                    type="text"
-                    value={subtask.title}
-                    onChange={(e) => UpdateSubTaskTitle(index, e.target.value)}
-                  ></input>
-                </li>
-              );
-            })}
-          </ul>
-          <div>
-            <input
-              onChange={handleNewSubTaskIsDone}
-              type="checkbox"
-              className="appearance-none h-6 w-6 mx-2 rounded-full cursor-pointer  border-2 border-white hover:border-none
+            {task.subtasks.map((subtask, index) => (
+              <li key={index}>
+                <div className="flex">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="appearance-none h-6 w-6 mx-2 rounded-full cursor-pointer  border-2 border-white hover:border-none
                  hover:bg-white hover:ring-2 hover:ring-white hover:ring-opacity-50
                   transition-transform duration-100 checked:bg-blue-600  checked:ring-2 checked:ring-black checked:ring-opacity-100 checked:text-white checked:border-none"
-            ></input>
-            <input
-              className=" bg-green-100 border-none outline-none  h-10 w-3/6 rounded-md px-4  my-2"
-              type="text"
-              value={subtask.title}
-              onBlur={blurNewSubTaskTaskTitle}
-              onChange={handleNewSubTaskTitle}
-              onFocus={focusNewSubTaskTaskTitle}
-            ></input>
+                      checked={subtask.isDone}
+                      onChange={(e) =>
+                        updateSubTaskIsDone(index, e.target.checked)
+                      }
+                    ></input>
+                  </div>
+                  <div className="w-full">
+                    <input
+                      className="bg-green-200 border-none outline-none  h-10 w-3/6 rounded-md px-4 my-2 mr-2"
+                      type="text"
+                      value={subtask.name}
+                      onBlur={(e) => blurNewSubTaskTaskTitle(e, index)}
+                      onChange={(e) =>
+                        updateSubTaskTitle(index, e.target.value)
+                      }
+                      onFocus={(e) => focusNewSubTaskTaskTitle(e, index)}
+                    ></input>
+                    <button
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => handleDeleteSubTask(index)}
+                    >
+                      Eliminar Subtarea
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                className="appearance-none h-6 w-6 mx-2 rounded-full cursor-pointer  border-2 border-white hover:border-none
+                 hover:bg-white hover:ring-2 hover:ring-white hover:ring-opacity-50
+                  transition-transform duration-100 checked:bg-blue-600  checked:ring-2 checked:ring-black checked:ring-opacity-100 checked:text-white checked:border-none"
+                checked={subtask.isDone}
+                onChange={(e) => setSubTask({ ...subtask, isDone: e.target.checked })}
+              ></input>
+              <input
+                className="bg-green-200 border-none outline-none  h-10 w-3/6 rounded-md px-4 my-2"
+                type="text"
+                value={subtask.name}
+                onBlur={blurNewSubTaskTaskTitle}
+                onChange={handleNewSubTaskTitle}
+                onFocus={focusNewSubTaskTaskTitle}
+              ></input>
+              
+            </div>
           </div>
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-            onClick={handleSaveTask}
-          >
-            Guardar Tarea
-          </button>
+          <div className="mt-4">
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleSaveTask}
+            >
+              Guardar Tarea
+            </button>
+          </div>
         </div>
       </main>
     </div>

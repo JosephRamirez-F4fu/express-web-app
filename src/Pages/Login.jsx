@@ -6,6 +6,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
@@ -57,11 +58,13 @@ const LoginPage = () => {
         >
           Iniciar sesión
         </button>
-        <button
+        <Link
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 my-4 rounded"
+          to="/signup"
+          
         >
          ¿No tienes un cuenta ? registrate aquí!  
-        </button>
+        </Link>
       </form>
     </div>
     </div>
