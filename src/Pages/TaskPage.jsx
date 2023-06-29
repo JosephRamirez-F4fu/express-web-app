@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function TaskPage() {
-  const [isNewTask, SetIsNewTask] = useState(true);
+  const [isNewTask, setIsNewTask] = useState(true);
   const [tasks, setTasks] = useState([
     {
       id: 1,
@@ -11,99 +11,116 @@ export default function TaskPage() {
     },
   ]);
 
-  //nueva subtarea
+  // nueva subtarea
   const [subtask, setSubTask] = useState({
     title: "nueva subtarea",
     isDone: false,
   });
-  //mi tarea nueva
-  const [task, SetTask] = useState({
+  // mi tarea nueva
+  const [task, setTask] = useState({
     title: "nueva tarea",
     isDone: false,
     subtasks: [],
   });
 
-
-  //TAREA PRINCIPAL
+  // TAREA PRINCIPAL
   const updateTask = (index, newTask) => {
-    
     const updatedTasks = [...tasks];
     updatedTasks[index] = newTask;
     setTasks(updatedTasks);
   };
 
   const handleTaskTitle = (e) => {
-    SetTask({ ...task, title: e.target.value });
-  };
-  const blurTaskTitle = (e) => {
-    if (e.target.value == "") {
-      e.target.value = "nueva tarea";
-      SetTask({ ...task, title: "nueva tarea" });
-    }
-    if (e.target.value != "" && e.target.value != "nueva tarea" && isNewTask) {
-      setTasks([...tasks, task]);
-      SetTask({
-        title: "nueva tarea",
-        isDone: false,
-        subtasks: [],
-      });
-    }
-  };
-  const focusTaskTitle = (e) => {
-    if (e.target.value == "nueva tarea") e.target.value = "";
-  };
-  const handleIsDone = (e) => {
-    SetTask({ ...task, isDone: e.target.checked });
+    setTask({ ...task, title: e.target.value });
   };
 
-  //NUEVA SUBTAREA
+  const blurTaskTitle = (e) => {
+    if (e.target.value === "") {
+      e.target.value = "nueva tarea";
+      setTask({ ...task, title: "nueva tarea" });
+    }
+  };
+
+  const focusTaskTitle = (e) => {
+    if (e.target.value === "nueva tarea") e.target.value = "";
+  };
+
+  const handleIsDone = (e) => {
+    setTask({ ...task, isDone: e.target.checked });
+  };
+
+  // NUEVA SUBTAREA
   const handleNewSubTaskTitle = (e) => {
     setSubTask({ ...subtask, title: e.target.value });
   };
+
   const blurNewSubTaskTaskTitle = (e) => {
-    if (e.target.value == "") {
+    if (e.target.value === "") {
       e.target.value = "nueva subtarea";
       setSubTask({ ...subtask, title: "nueva subtarea" });
     }
     if (e.target.value !== "" && e.target.value !== "nueva subtarea") {
-      SetTask({ ...task, subtasks: [...task.subtasks, subtask] });
+      setTask({ ...task, subtasks: [...task.subtasks, subtask] });
       setSubTask({
         title: "nueva subtarea",
         isDone: false,
       });
     }
   };
+
   const focusNewSubTaskTaskTitle = (e) => {
-    if (e.target.value == "nueva subtarea") e.target.value = "";
+    if (e.target.value === "nueva subtarea") e.target.value = "";
   };
+
   const handleNewSubTaskIsDone = (e) => {
     setSubTask({ ...subtask, isDone: e.target.checked });
   };
 
-  //
   const UpdateSubTaskTitle = (index, value) => {
     const updateSubTasks = [...task.subtasks];
     updateSubTasks[index] = { ...updateSubTasks[index], title: value };
-    SetTask({ ...task, subtasks: updateSubTasks });
+    setTask({ ...task, subtasks: updateSubTasks });
   };
+
   const UpdateSubTaskIsDone = (index, value) => {
     const updateSubTasks = [...task.subtasks];
     updateSubTasks[index] = {
       ...updateSubTasks[index],
       isDone: value,
     };
-    SetTask({ ...task, subtasks: updateSubTasks });
+    setTask({ ...task, subtasks: updateSubTasks });
+  };
+
+  const handleSaveTask = () => {
+    if (isNewTask) {
+      // Agregar una nueva tarea
+      const newTask = { ...task, id: tasks.length + 1 };
+      setTasks([...tasks, newTask]);
+      setTask({
+        title: "nueva tarea",
+        isDone: false,
+        subtasks: [],
+      })
+    } else {
+      // Editar una tarea existente
+      const updatedTasks = [...tasks];
+      const taskIndex = updatedTasks.findIndex((t) => t.id === task.id);
+      if (taskIndex !== -1) {
+        updatedTasks[taskIndex] = task;
+        setTasks(updatedTasks);
+      }
+    }
   };
 
   return (
     <div className="grid  justify-center ">
-      <main className=" w-[80rem] min-h-[88vh] grid grid-cols-5 grid-rows-2 gap-3 p-4 ">
+      <main className="w-[80rem] min-h-[88vh] grid grid-cols-5 grid-rows-2 gap-3 p-4 ">
         <div className="col-span-1 row-span-2 bg-yellow-500 rounded-xl p-4 ">
           <div
             className="bg-yellow-300 px-3 rounded-md cursor-pointer hover:bg-yellow-200 mb-2"
             onClick={() => {
-              SetIsNewTask(true);
-              SetTask({
+              setIsNewTask(true);
+              setTask({
                 title: "nueva tarea",
                 isDone: false,
                 subtasks: [],
@@ -119,8 +136,8 @@ export default function TaskPage() {
                   <div
                     className="bg-yellow-400 px-3 rounded-md cursor-pointer hover:bg-yellow-200 mb-2"
                     onClick={() => {
-                      SetTask(item);
-                      SetIsNewTask(false);
+                      setTask(item);
+                      setIsNewTask(false);
                     }}
                   >
                     {item.title}
@@ -141,7 +158,7 @@ export default function TaskPage() {
                   transition-transform duration-100 checked:bg-blue-600  checked:ring-2 checked:ring-black checked:ring-opacity-100 checked:text-white checked:border-none"
               ></input>
               <input
-                className=" bg-green-200 border-none outline-none  h-10 w-3/6 rounded-md px-4 my-2"
+                className="bg-green-200 border-none outline-none  h-10 w-3/6 rounded-md px-4 my-2"
                 type="text"
                 value={task.title}
                 onBlur={blurTaskTitle}
@@ -191,6 +208,12 @@ export default function TaskPage() {
               onFocus={focusNewSubTaskTaskTitle}
             ></input>
           </div>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+            onClick={handleSaveTask}
+          >
+            Guardar Tarea
+          </button>
         </div>
       </main>
     </div>
