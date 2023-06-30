@@ -34,61 +34,14 @@ export const UseUser = () => {
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState({
-    firstname: "Gonzalo",
-    lastname: "Nuñez",
-    password: "654321",
-    email: "Gonza@gmail.com",
+    firstname: "",
+    lastname: "",
+    password: "",
+    email: "",
   });
-  const [notes, setNotes] = useState([
-    {
-      id: "1",
-      id_student: "id id_student",
-      note: 
-        {
-          title: "mi nota",
-          text: "hay dios mio porfavor .... \n no se  asdasdas zxc asd xc zxqaeqwzcasdzxq das dasdczxc asds",
-        }
-    }, {
-      id: "2",
-      id_student: "id id_student",
-      note: 
-        {
-          title: "mi nota",
-          text: "hay dios mio porfavor .... \n no se ",
-        }
-    }, {
-      id: "3",
-      id_student: "id id_student",
-      note: 
-        {
-          title: "mi nota",
-          text: "hay dios mio porfavor .... \n no se ",
-        }
-    }, {
-      id: "4",
-      id_student: "id id_student",
-      note: 
-        {
-          title: "mi nota",
-          text: "hay dios mio porfavor .... \n no se ",
-        }
-    }
-  ]);
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      name: "asdasd asd",
-      isDone: false,
-      subtasks: [{ name: "asdaaaasd", isDone: true }],
-    },
-    {
-      id: 2,
-      name: "asdasd asdasd",
-      isDone: false,
-      subtasks: [{ name: "asdasaaaad", isDone: true }],
-    },
-  ]);
-  const [isLogin, setisLogin] = useState(true);
+  const [notes, setNotes] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [isLogin, setisLogin] = useState(false);
 
   const login = () => {
     setisLogin(true);
@@ -100,7 +53,9 @@ export const UserContextProvider = ({ children }) => {
 
   const createUserConsumer = async (newUser) => {
     try {
+      //console.log(newUser)
       const response = await postUser(newUser);
+      console.log(response.data)
       setUser(response.data);
     } catch (error) {
       console.log(error);
@@ -109,8 +64,14 @@ export const UserContextProvider = ({ children }) => {
   const loginUserConsumer = async (dataUserForLogin) => {
     try {
       const response = await loginUser(dataUserForLogin);
-      setUser(response.data);
-      setisLogin(true);
+      if(response.status==200 && response.data[0]){
+        setUser(response.data[0]);
+        setisLogin(true);
+        console.log(user)
+        return true
+      }else{
+        return false;
+      }
     } catch (error) {
       console.log(error);
     }
@@ -214,17 +175,18 @@ export const UserContextProvider = ({ children }) => {
     try {
       const response = await getNotesUserId(id);
       setNotes(response.data);
+      console.log(response.data)
     } catch (error) {
       console.log(error);
     }
   };
-  const putNoteIdConsumer = async (id, updateNote) => {
+  const putNoteIdConsumer = async (id, editNote) => {
     try {
-      await putNoteId(id, updateNote);
+      await putNoteId(id, editNote);
       setNotes(
         notes.map((note) => {
           if (note.id === id) {
-            return { ...note, ...updateData };
+            return { ...note, ...editNote };
           }
           return note;
         })

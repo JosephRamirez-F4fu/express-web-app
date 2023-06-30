@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UseUser } from "../context/UserContext";
 
 export default function TaskPage() {
   const [isNewTask, setIsNewTask] = useState(true);
-  const {tasks, setTasks} = UseUser();
-  console.log(tasks)
+  const {tasks, setTasks,getTasksUserIdConsumer,user} = UseUser();
+  useEffect(()=>{
+    getTasksUserIdConsumer(user._id)
+    console.log(tasks)
+  },[])
   // Nueva subtarea
   const [subtask, setSubTask] = useState({
     name: "nueva subtarea",

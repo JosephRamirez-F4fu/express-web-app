@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UseUser } from "../context/UserContext";
 
 export default function NotesPage() {
-  const {notes, setNotes} = UseUser();
+  const {notes, setNotes,user,getNotesUserIdConsumer,postNoteConsumer,putNoteIdConsumer,delNoteIdConsumer} = UseUser();
   const [note, setNote] = useState({});
   const [selectedNote, setSelectedNote] = useState(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-
+  useEffect(()=>{
+    getNotesUserIdConsumer(user._id)
+  },[])
   const handleTitleChange = (event) => {
     setNote({ ...note, title: event.target.value });
   };
@@ -23,12 +25,14 @@ export default function NotesPage() {
       if (index !== -1) {
         updatedNotes[index].note.title = note.title;
         updatedNotes[index].note.text = note.text;
+       putNoteIdConsumer(selectedNote.id,selectedNote)
       }
     } else {
-      const newNote = { id: Date.now(), note: { ...note } };
+      const newNote = { id: Date.now(), note: { ...note },id_student:user._id };
+      postNoteConsumer(newNote)
       updatedNotes.push(newNote);
     }
-
+    //console.log(selectedNote)
     setNotes(updatedNotes);
     setNote({});
     setSelectedNote(null);
@@ -37,6 +41,8 @@ export default function NotesPage() {
 
   const handleNoteDelete = () => {
     const updatedNotes = notes.filter((note) => note.id !== selectedNote.id);
+    console.log(selectedNote)
+    delNoteIdConsumer(selectedNote.id)
     setNotes(updatedNotes);
     setSelectedNote(null);
     setIsOverlayOpen(false);

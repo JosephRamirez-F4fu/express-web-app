@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import banner from "/notion-parade.avif"
 import  logo from "/Notion-logo.svg.png"
 import { Link } from 'react-router-dom';
+import { UseUser } from '../context/UserContext';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const {loginUserConsumer,user}= UseUser();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -17,10 +18,8 @@ const LoginPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Aquí puedes realizar la lógica de autenticación, como enviar los datos al servidor.
-    // Por simplicidad, este ejemplo solo muestra los datos en la consola.
-    console.log('Email:', email);
-    console.log('Password:', password);
+    loginUserConsumer({password:password,email:email});
+    console.log(user)
   };
 
   return (
